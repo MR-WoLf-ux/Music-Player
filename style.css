@@ -1,0 +1,604 @@
+* {
+    font-family: "Vazirmatn", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    overflow: hidden;
+    transition: background-color 0.3s;
+}
+
+button {
+    outline: none;
+}
+
+#playIcon,
+#pauseIcon {
+    width: 24px;
+    height: 24px;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    width: 80%;
+    margin: 20px auto;
+    transition: background-color 0.3s;
+}
+
+.lyrics-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lyrics-box {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 300px;
+    margin-right: 20px;
+    overflow-y: hidden;
+    max-height: 400px;
+    direction: rtl;
+    text-align: right;
+    display: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.lyrics-box.show {
+    display: block !important;
+}
+
+#lyrics-textarea {
+    width: 100%;
+    height: calc(100% - 60px);
+    border: 1px solid #ccc;
+    resize: none;
+    font-family: inherit;
+    direction: ltr;
+    padding: 5px;
+    box-sizing: border-box;
+    outline: none;
+    margin-bottom: 10px;
+    scrollbar-width: none;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.container.lyrics-visible .music-player {
+    margin-right: 20px;
+}
+
+.music-player {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    width: 400px;
+    direction: rtl;
+    overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.current-song {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 200px;
+}
+
+.album-cover {
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0; /* جلوگیری از کوچک شدن کاور */
+    margin: 0 auto 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 150px;
+}
+
+#album-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#song-info {
+    text-align: center;
+    margin-top: 10px;
+    width: 100%; /* اجازه می‌ده اسم آهنگ فضای خودش رو داشته باشه */
+    overflow: hidden;
+}
+
+#song-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    transition: color 0.3s;
+    white-space: nowrap; /* جلوگیری از شکستن خط */
+    overflow: hidden;
+    text-overflow: ellipsis; /* اضافه کردن ... برای اسم‌های بلند */
+    max-width: 100%;
+}
+
+#artist {
+    font-size: 1rem;
+    color: #777;
+    transition: color 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 200px; /* افزایش مقدار برای جا دادن ویژوالایزر */
+}
+
+.top-controls {
+    margin-bottom: 10px;
+}
+
+.controls button {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    color: #333;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.controls button.active {
+    color: #28a745;
+}
+
+.controls button:hover {
+    transform: scale(1.2);
+    color: #007bff;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    margin-bottom: 10px;
+}
+
+#seek-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: #ddd;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s, background 0.3s;
+    border-radius: 4px;
+}
+
+#seek-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+}
+
+#seek-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+}
+
+#volume-slider {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: #ddd;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: 0.2s;
+    transition: opacity 0.2s, background 0.3s;
+    border-radius: 4px;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+}
+
+#volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+}
+
+.visualizer-container {
+    width: 90%;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+#visualizer {
+    width: 100%;
+    height: 80px; /* افزایش ارتفاع برای افکت‌های جدید */
+    border-radius: 8px;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(0, 0, 0, 0.05)
+    );
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* سایه ملایم */
+    transition: background 0.3s;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #777;
+    margin-right: 10px;
+    transition: color 0.3s;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    gap: 10px;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 50px;
+}
+
+#search-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    direction: rtl;
+    outline: none;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+#search-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.toggle-playlist-btn {
+    display: block;
+    margin: 10px auto;
+    padding: 5px 10px;
+    font-size: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.toggle-playlist-btn:hover {
+    background-color: #0056b3;
+}
+
+.playlist {
+    transition: max-height 0.5s ease;
+    max-height: 300px;
+}
+
+.playlist ul {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-x: hidden;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.playlist li a {
+    display: block;
+    padding: 8px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.playlist li:last-child a {
+    border-bottom: none;
+}
+
+#select-folder-btn {
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#select-folder-btn:hover {
+    background-color: #0056b3;
+}
+
+.theme-toggle-container {
+    margin-top: 10px;
+    width: 300px;
+    margin-right: 20px;
+}
+
+#theme-toggle-btn {
+    padding: 10px;
+    border: none;
+    background-color: #555;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#theme-toggle-btn:hover {
+    background-color: #333;
+}
+
+#save-lyrics-btn {
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#save-lyrics-btn:hover {
+    background-color: #0056b3;
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+#notification-title {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+#notification-artist {
+    font-size: 0.9rem;
+    color: #bbb;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.notification.show {
+    display: flex;
+    animation: slideIn 0.5s ease-in-out forwards;
+}
+
+.notification.hide {
+    animation: slideOut 0.5s ease-in-out forwards;
+}
+
+.music-player.collapsed .current-song,
+.music-player.collapsed .controls,
+.music-player.collapsed .search-container {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.music-player.collapsed .playlist {
+    max-height: 500px;
+}
+
+/* تم دارک */
+body.dark-theme {
+    background-color: #1a1a1a;
+}
+
+.dark-theme .container {
+    background-color: #1a1a1a;
+}
+
+.dark-theme .music-player {
+    background-color: #2c2c2c;
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme .album-cover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme .lyrics-box {
+    background-color: #2c2c2c;
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.dark-theme #lyrics-textarea {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+.dark-theme #song-title {
+    color: #fff;
+}
+
+.dark-theme #artist {
+    color: #bbb;
+}
+
+.dark-theme .current-song {
+    border-bottom: 1px solid #555;
+}
+
+.dark-theme .controls button {
+    color: #fff;
+}
+
+.dark-theme .controls button:hover {
+    color: #007bff;
+}
+
+.dark-theme .controls button.active {
+    color: #28a745;
+}
+
+.dark-theme .time-display {
+    color: #bbb;
+}
+
+.dark-theme #seek-slider {
+    background: #555;
+}
+
+.dark-theme #volume-slider {
+    background: #555;
+}
+
+.dark-theme .playlist ul {
+    border: 1px solid #555;
+    background-color: #333;
+}
+
+.dark-theme .playlist li a {
+    color: #fff;
+    border-bottom: 1px solid #555;
+}
+
+.dark-theme .playlist li a:hover {
+    background-color: #444;
+}
+
+.dark-theme #select-folder-btn {
+    background-color: #007bff;
+}
+
+.dark-theme #select-folder-btn:hover {
+    background-color: #0056b3;
+}
+
+.dark-theme #search-input {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+.dark-theme #search-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.dark-theme #save-lyrics-btn {
+    background-color: #444;
+}
+
+.dark-theme #save-lyrics-btn:hover {
+    background-color: #666;
+}
+
+.dark-theme .theme-toggle-container #theme-toggle-btn {
+    background-color: #444;
+}
+
+.dark-theme .theme-toggle-container #theme-toggle-btn:hover {
+    background-color: #666;
+}
+
+.dark-theme .notification {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme .toggle-playlist-btn {
+    background-color: #007bff;
+}
+
+.dark-theme .toggle-playlist-btn:hover {
+    background-color: #0056b3;
+}
+
+.dark-theme #visualizer {
+    background: linear-gradient(
+        180deg,
+        rgba(50, 50, 50, 0.2),
+        rgba(0, 0, 0, 0.1)
+    );
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
