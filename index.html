@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>موزیک پلیر</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="music-player">
+            <div class="current-song">
+                <div class="album-cover" id="album-cover">
+                    <img id="album-cover-img" src="/images/default-cover.jpg" alt="Album Cover">
+                </div>
+                <div id="song-info">
+                    <span id="song-title"></span>
+                    <span id="artist"></span>
+                </div>
+            </div>
+            <audio id="audio-player"></audio>
+            <div class="controls">
+                <div class="top-controls">
+                    <button id="repeat-btn" aria-label="تکرار آهنگ">
+                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 10 3-3m0 0-3-3m3 3H5v3m3 4-3 3m0 0 3 3m-3-3h14v-3" />
+                        </svg>
+                    </button>
+                    <button id="prev-btn" aria-label="آهنگ قبلی">
+                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 6v12M8 6v12l8-6-8-6Z" />
+                        </svg>
+                    </button>
+                    <button id="play-btn" aria-label="پخش/توقف">
+                        <svg id="playIcon" class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 18V6l8 6-8 6Z" />
+                        </svg>
+                        <svg id="pauseIcon" style="display: none;" class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6H8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 0h-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Z" />
+                        </svg>
+                    </button>
+                    <button id="next-btn" aria-label="آهنگ بعدی">
+                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 6v12m8-12v12l-8-6 8-6Z" />
+                        </svg>
+                    </button>
+                    <button id="shuffle-btn" aria-label="تصادفی">
+                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.484 9.166 15 7h5m0 0-3-3m3 3-3 3M4 17h4l1.577-2.253M4 7h4l7 10h5m0 0-3 3m3-3-3-3" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="progress-container">
+                    <input type="range" id="seek-slider" min="0" value="0" aria-label="نوار پیشرفت">
+                    <div class="time-display">
+                        <span id="current-time">0:00</span>/<span id="duration">0:00</span>
+                    </div>
+                </div>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1" aria-label="نوار صدا">
+                <div class="visualizer-container">
+                    <canvas id="visualizer" width="300" height="80"></canvas>
+                </div>
+            </div>
+            <div class="search-container">
+                <button id="select-folder-btn">انتخاب پوشه</button>
+                <input type="text" id="search-input" placeholder="جستجوی آهنگ..." aria-label="جستجوی آهنگ">
+            </div>
+            <button id="toggle-playlist-btn" class="toggle-playlist-btn">↑</button>
+            <input type="file" id="folder-input" webkitdirectory directory multiple style="display: none;">
+            <div class="playlist">
+                <h2>لیست پخش</h2>
+                <ul id="playlist-list"></ul>
+            </div>
+        </div>
+        <div class="lyrics-section">
+            <div class="lyrics-box" id="lyrics-box" style="display: none;">
+                <h2>متن ترانه</h2>
+                <textarea id="lyrics-textarea" rows="10" aria-label="متن ترانه"></textarea>
+                <button id="save-lyrics-btn">ذخیره</button>
+            </div>
+            <div class="theme-toggle-container">
+                <button id="theme-toggle-btn">تغییر تم</button>
+            </div>
+        </div>
+    </div>
+    <div class="notification" id="song-notification">
+        <span id="notification-title"></span>
+        <span id="notification-artist"></span>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
