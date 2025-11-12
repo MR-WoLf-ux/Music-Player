@@ -39,50 +39,107 @@ let playlist = [];
 let isRepeating = false;
 let isShuffling = false;
 let isPlaylistCollapsed = false;
+
+// Web Audio API Setup for Visualizer
 let audioContext, analyser, source, dataArray;
-
-// بررسی پشتیبانی Web Audio API
 function setupAudioVisualizer() {
-    try {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        analyser = audioContext.createAnalyser();
-        source = audioContext.createMediaElementSource(audioPlayer);
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioContext.createAnalyser();
+    source = audioContext.createMediaElementSource(audioPlayer);
 
-        analyser.fftSize = 256; // کاهش برای عملکرد بهتر در موبایل
-        const bufferLength = analyser.frequencyBinCount;
-        dataArray = new Uint8Array(bufferLength);
+    analyser.fftSize = 512; // تعداد میله‌ها رو بیشتر می‌کنم برای جزئیات بیشتر
+    const bufferLength = analyser.frequencyBinCount;
+    dataArray = new Uint8Array(bufferLength);
 
-        source.connect(analyser);
-        analyser.connect(audioContext.destination);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
 
-        visualize();
-    } catch (e) {
-        console.warn("Web Audio API not supported or failed:", e);
-        visualizerCanvas.style.display = "none"; // مخفی کردن در صورت عدم پشتیبانی
-    }
+    visualize();
 }
 
 function visualize() {
     const bufferLength = analyser.frequencyBinCount;
-    const barWidth = (visualizerCanvas.width / bufferLength) * 2;
+    const barWidth = (visualizerCanvas.width / bufferLength) * 3; // پهن‌تر برای پر کردن فضا
     let x = 0;
+    let waveOffset = 0; // برای افکت موج‌دار
 
     function draw() {
         requestAnimationFrame(draw);
         analyser.getByteFrequencyData(dataArray);
 
-        visualizerCtx.fillStyle = "rgba(0, 0, 0, 0.1)";
-        visualizerCtx.fillRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+        // گرادیانت پس‌زمینه پویا
+        const gradientBg = visualizerCtx.createLinearGradient(
+            0,
+            0,
+            0,
+            visualizerCanvas.height
+        );
+        gradientBg.addColorStop(0, "rgba(0, 0, 50, 0.2)");
+        gradientBg.addColorStop(1, "rgba(0, 100, 200, 0.1)");
+        visualizerCtx.fillStyle = gradientBg;
+        visualizerCtx.fillRect(
+            0,
+            0,
+            visualizerCanvas.width,
+            visualizerCanvas.height
+        );
 
+        // رسم میله‌ها
         for (let i = 0; i < bufferLength; i++) {
-            let barHeight = dataArray[i] * 0.3;
+            let barHeight = dataArray[i] * 0.4; // مقیاس بزرگ‌تر برای جلوه بیشتر
 
-            const hue = (i / bufferLength) * 360;
-            visualizerCtx.fillStyle = `hsl(${hue}, 80%, 60%)`;
-            visualizerCtx.fillRect(x, visualizerCanvas.height - barHeight, barWidth - 1, barHeight);
+            // اضافه کردن افکت موج‌دار
+            const wave = Math.sin(i * 0.1 + waveOffset) * 10;
+            barHeight += wave;
 
-            x += barWidth;
+            // گرادیانت پویا برای میله‌ها
+            const hue = (i / bufferLength) * 360 + waveOffset * 10; // رنگ متغیر با موج
+            const gradient = visualizerCtx.createLinearGradient(
+                0,
+                visualizerCanvas.height,
+                0,
+                visualizerCanvas.height - barHeight
+            );
+            gradient.addColorStop(0, `hsla(${hue}, 100%, 50%, 0.9)`);
+            gradient.addColorStop(1, `hsla(${hue + 60}, 100%, 70%, 0.7)`);
+
+            visualizerCtx.fillStyle = gradient;
+            visualizerCtx.shadowBlur = 20;
+            visualizerCtx.shadowColor = `hsla(${hue}, 100%, 50%, 0.6)`;
+
+            // میله‌ها با گوشه‌های گرد و انیمیشن نرم
+            visualizerCtx.beginPath();
+            visualizerCtx.roundRect(
+                x,
+                visualizerCanvas.height - barHeight,
+                barWidth - 2,
+                barHeight,
+                10
+            );
+            visualizerCtx.fill();
+
+            // افکت درخشش در بالای میله‌ها
+            const glowGradient = visualizerCtx.createLinearGradient(
+                0,
+                visualizerCanvas.height - barHeight,
+                0,
+                visualizerCanvas.height - barHeight - 10
+            );
+            glowGradient.addColorStop(0, `hsla(${hue}, 100%, 70%, 0.5)`);
+            glowGradient.addColorStop(1, `hsla(${hue}, 100%, 70%, 0)`);
+            visualizerCtx.fillStyle = glowGradient;
+            visualizerCtx.fillRect(
+                x,
+                visualizerCanvas.height - barHeight - 10,
+                barWidth - 2,
+                10
+            );
+
+            x += barWidth + 1;
         }
+
+        // به‌روزرسانی افکت موج‌دار
+        waveOffset += 0.05;
         x = 0;
     }
 
@@ -94,9 +151,12 @@ function loadSong(songId) {
         if (song) {
             audioPlayer.src = URL.createObjectURL(song.file);
             let displayTitle = song.title;
-            const maxLength = 15; // کوتاه‌تر برای موبایل
+            const maxLength = 20; // حداکثر طول اسم آهنگ قبل از کوتاه شدن
             if (displayTitle.length > maxLength) {
-                displayTitle = displayTitle.substring(0, maxLength - 3) + "...";
+                displayTitle =
+                    displayTitle.substring(0, maxLength - 3) +
+                    "... " +
+                    (song.artist || "Unknown Artist");
             }
             songTitleDisplay.textContent = displayTitle;
             artistDisplay.textContent = song.artist || "Unknown Artist";
@@ -107,31 +167,45 @@ function loadSong(songId) {
                 onSuccess: (tag) => {
                     const picture = tag.tags.picture;
                     if (picture) {
-                        const base64String = btoa(String.fromCharCode(...new Uint8Array(picture.data)));
-                        albumCoverImg.src = `data:${picture.format};base64,${base64String}`;
+                        const base64String = btoa(
+                            String.fromCharCode(...new Uint8Array(picture.data))
+                        );
+                        const imageUrl = `data:${picture.format};base64,${base64String}`;
+                        albumCoverImg.src = imageUrl;
                     } else {
-                        albumCoverImg.src = "/images/default-cover.jpg";
+                        albumCoverImg.src = "/Icon/Default.png";
                     }
 
                     if (tag.tags.artist) {
                         artistDisplay.textContent = tag.tags.artist;
                         song.artist = tag.tags.artist;
-                        updateSongMetadataInDB(songId, { artist: tag.tags.artist });
+                        updateSongMetadataInDB(songId, {
+                            artist: tag.tags.artist,
+                        });
                     }
 
+                    // به‌روزرسانی عنوان با توجه به طول
                     displayTitle = tag.tags.title || song.title;
                     if (displayTitle.length > maxLength) {
-                        displayTitle = displayTitle.substring(0, maxLength - 3) + "...";
+                        displayTitle =
+                            displayTitle.substring(0, maxLength - 3) +
+                            "... " +
+                            (tag.tags.artist ||
+                                song.artist ||
+                                "Unknown Artist");
                     }
                     songTitleDisplay.textContent = displayTitle;
 
-                    showNotification(song.title, tag.tags.artist || song.artist);
+                    showNotification(
+                        song.title,
+                        tag.tags.artist || song.artist
+                    );
                 },
                 onError: (error) => {
                     console.error("Error reading metadata:", error);
-                    albumCoverImg.src = "/images/default-cover.jpg";
+                    albumCoverImg.src = "/Icon/Default.png";
                     artistDisplay.textContent = song.artist || "Unknown Artist";
-                    songTitleDisplay.textContent = displayTitle;
+                    songTitleDisplay.textContent = displayTitle; // استفاده از عنوان قبلی در صورت خطا
                     showNotification(song.title, song.artist);
                 },
             });
@@ -139,7 +213,7 @@ function loadSong(songId) {
             audioPlayer.addEventListener(
                 "loadeddata",
                 () => {
-                    audioPlayer.play().catch((e) => console.error("Playback failed:", e));
+                    audioPlayer.play();
                     updatePlayButtonText();
                     lyricsTextarea.value = song.lyrics || "";
                     lyricsBox.classList.add("show");
@@ -151,14 +225,19 @@ function loadSong(songId) {
         } else {
             lyricsBox.classList.remove("show");
             container.classList.remove("lyrics-visible");
-            albumCoverImg.src = "/images/default-cover.jpg";
+            albumCoverImg.src = "/Icon/Default.png";
         }
     });
 }
 
 function updatePlayButtonText() {
-    playIcon.style.display = audioPlayer.paused ? "block" : "none";
-    pauseIcon.style.display = audioPlayer.paused ? "none" : "block";
+    if (audioPlayer.paused) {
+        playIcon.style.display = "block";
+        pauseIcon.style.display = "none";
+    } else {
+        playIcon.style.display = "none";
+        pauseIcon.style.display = "block";
+    }
 }
 
 function saveSongToDB(song, callback) {
@@ -168,7 +247,7 @@ function saveSongToDB(song, callback) {
 
     request.onsuccess = (event) => {
         console.log("Song added to database with ID:", event.target.result);
-        callback?.(event.target.result);
+        if (callback) callback(event.target.result);
     };
     request.onerror = (event) => {
         console.error("Error adding song:", event.target.error);
@@ -183,7 +262,9 @@ function getSongFromDB(id, callback) {
     request.onsuccess = (event) => {
         const song = event.target.result;
         if (song) {
-            callback({ ...song, src: URL.createObjectURL(song.file) });
+            const blob = song.file;
+            const url = URL.createObjectURL(blob);
+            callback({ ...song, src: url });
         } else {
             callback(null);
         }
@@ -201,14 +282,20 @@ function getAllSongsFromDB(callback) {
 
 function loadSavedPlaylist() {
     getAllSongsFromDB((songs) => {
-        playlist = songs || [];
-        displayPlaylist();
-        if (playlist.length > 0) {
-            loadSong(playlist[0].id);
+        if (songs) {
+            playlist = songs;
+            displayPlaylist();
+            if (playlist.length > 0) {
+                loadSong(playlist[0].id);
+            } else {
+                lyricsBox.classList.remove("show");
+                container.classList.remove("lyrics-visible");
+                albumCoverImg.src = "/Icon/Default.png";
+            }
         } else {
             lyricsBox.classList.remove("show");
             container.classList.remove("lyrics-visible");
-            albumCoverImg.src = "/images/default-cover.jpg";
+            albumCoverImg.src = "/Icon/Default.png";
         }
     });
 }
@@ -224,7 +311,6 @@ function displayPlaylist(searchTerm = "") {
         link.href = "#";
         link.textContent = `${index + 1}. ${song.title}`;
         link.dataset.index = song.id;
-        link.setAttribute("aria-label", `پخش آهنگ ${song.title}`);
         listItem.appendChild(link);
         playlistList.appendChild(listItem);
     });
@@ -240,8 +326,12 @@ function updateSongLyricsInDB(id, lyrics) {
         if (song) {
             song.lyrics = lyrics;
             const putRequest = objectStore.put(song);
-            putRequest.onsuccess = () => console.log("Lyrics updated in database.");
-            putRequest.onerror = (error) => console.error("Error updating lyrics:", error);
+            putRequest.onsuccess = () => {
+                console.log("Lyrics updated in database.");
+            };
+            putRequest.onerror = (error) => {
+                console.error("Error updating lyrics:", error);
+            };
         }
     };
 }
@@ -256,8 +346,12 @@ function updateSongMetadataInDB(id, metadata) {
         if (song) {
             Object.assign(song, metadata);
             const putRequest = objectStore.put(song);
-            putRequest.onsuccess = () => console.log("Metadata updated in database.");
-            putRequest.onerror = (error) => console.error("Error updating metadata:", error);
+            putRequest.onsuccess = () => {
+                console.log("Metadata updated in database.");
+            };
+            putRequest.onerror = (error) => {
+                console.error("Error updating metadata:", error);
+            };
         }
     };
 }
@@ -275,7 +369,9 @@ function showNotification(title, artist) {
     }, 3000);
 }
 
-request.onerror = (event) => console.error("Database error:", event.target.errorCode);
+request.onerror = (event) => {
+    console.error("Database error:", event.target.errorCode);
+};
 
 request.onsuccess = (event) => {
     db = event.target.result;
@@ -284,11 +380,16 @@ request.onsuccess = (event) => {
 
 request.onupgradeneeded = (event) => {
     db = event.target.result;
-    const objectStore = db.createObjectStore("songs", { keyPath: "id", autoIncrement: true });
+    const objectStore = db.createObjectStore("songs", {
+        keyPath: "id",
+        autoIncrement: true,
+    });
     objectStore.createIndex("title", "title", { unique: false });
 };
 
-selectFolderBtn.addEventListener("click", () => folderInput.click());
+selectFolderBtn.addEventListener("click", () => {
+    folderInput.click();
+});
 
 folderInput.addEventListener("change", (event) => {
     const transaction = db.transaction(["songs"], "readwrite");
@@ -304,7 +405,7 @@ folderInput.addEventListener("change", (event) => {
             const file = files[i];
             if (file.type.startsWith("audio/")) {
                 const song = {
-                    title: file.name.replace(/\.[^/.]+$/, ""),
+                    title: file.name,
                     artist: "",
                     file: file,
                     lyrics: "",
@@ -320,11 +421,10 @@ folderInput.addEventListener("change", (event) => {
                 });
             }
         }
-        if (files.length === 0) {
-            showNotification("خطا", "هیچ فایل صوتی یافت نشد");
-        }
     };
-    clearRequest.onerror = (event) => console.error("Error clearing Object Store:", event.target.error);
+    clearRequest.onerror = (event) => {
+        console.error("Error clearing Object Store:", event.target.error);
+    };
 });
 
 saveLyricsBtn.addEventListener("click", () => {
@@ -332,29 +432,24 @@ saveLyricsBtn.addEventListener("click", () => {
         const selectedId = playlist[currentSongIndex].id;
         const newLyrics = lyricsTextarea.value;
         updateSongLyricsInDB(selectedId, newLyrics);
-        showNotification("موفق", "متن ترانه ذخیره شد");
     }
 });
 
 playBtn.addEventListener("click", () => {
     if (playlist.length > 0) {
         if (audioPlayer.paused) {
-            audioPlayer.play().catch((e) => console.error("Playback failed:", e));
+            audioPlayer.play();
             updatePlayButtonText();
         } else {
             audioPlayer.pause();
             updatePlayButtonText();
         }
-    } else {
-        showNotification("خطا", "هیچ آهنگی انتخاب نشده است");
     }
 });
 
 nextBtn.addEventListener("click", () => {
     if (playlist.length > 0) {
-        currentSongIndex = isShuffling
-            ? Math.floor(Math.random() * playlist.length)
-            : (currentSongIndex + 1) % playlist.length;
+        currentSongIndex = (currentSongIndex + 1) % playlist.length;
         loadSong(playlist[currentSongIndex].id);
         updatePlayButtonText();
     }
@@ -362,7 +457,8 @@ nextBtn.addEventListener("click", () => {
 
 prevBtn.addEventListener("click", () => {
     if (playlist.length > 0) {
-        currentSongIndex = (currentSongIndex - 1 + playlist.length) % playlist.length;
+        currentSongIndex =
+            (currentSongIndex - 1 + playlist.length) % playlist.length;
         loadSong(playlist[currentSongIndex].id);
         updatePlayButtonText();
     }
@@ -388,6 +484,13 @@ shuffleBtn.addEventListener("click", () => {
     shuffleBtn.classList.toggle("active");
     repeatBtn.classList.remove("active");
     isRepeating = false;
+    if (isShuffling) {
+        playlist.sort(() => Math.random() - 0.5);
+        displayPlaylist();
+    } else {
+        playlist.sort((a, b) => a.title.localeCompare(b.title));
+        displayPlaylist();
+    }
 });
 
 volumeSlider.addEventListener("input", () => {
@@ -399,42 +502,70 @@ seekSlider.addEventListener("input", () => {
 });
 
 audioPlayer.addEventListener("timeupdate", () => {
-    seekSlider.max = audioPlayer.duration || 0;
+    seekSlider.max = audioPlayer.duration;
     seekSlider.value = audioPlayer.currentTime;
 
+    // اصلاح نمایش زمان با اضافه کردن صفر
     const currentTimeMinutes = Math.floor(audioPlayer.currentTime / 60);
     const currentTimeSeconds = Math.floor(audioPlayer.currentTime % 60);
     const durationMinutes = Math.floor(audioPlayer.duration / 60);
     const durationSeconds = Math.floor(audioPlayer.duration % 60);
 
-    currentTimeDisplay.textContent = `${currentTimeMinutes}:${currentTimeSeconds < 10 ? "0" : ""}${currentTimeSeconds}`;
-    durationDisplay.textContent = `${isNaN(durationMinutes) ? "0" : durationMinutes}:${isNaN(durationSeconds) ? "00" : durationSeconds < 10 ? "0" : ""}${isNaN(durationSeconds) ? "0" : durationSeconds}`;
+    // فرمت زمان با دو رقم برای ثانیه‌ها
+    currentTimeDisplay.textContent = `${currentTimeMinutes}:${
+        currentTimeSeconds < 10 ? "0" : ""
+    }${currentTimeSeconds}`;
+    durationDisplay.textContent = `${
+        isNaN(durationMinutes) ? "0" : durationMinutes
+    }:${isNaN(durationSeconds) ? "0" : ""}${
+        isNaN(durationSeconds) ? "0" : durationSeconds < 10 ? "0" : ""
+    }${isNaN(durationSeconds) ? "0" : durationSeconds}`;
 });
 
 audioPlayer.addEventListener("ended", () => {
     if (isRepeating) {
         audioPlayer.play();
     } else if (isShuffling) {
-        currentSongIndex = Math.floor(Math.random() * playlist.length);
+        let newIndex;
+        do {
+            newIndex = Math.floor(Math.random() * playlist.length);
+        } while (newIndex === currentSongIndex && playlist.length > 1);
+        currentSongIndex = newIndex;
         loadSong(playlist[currentSongIndex].id);
     } else {
         nextBtn.click();
     }
 });
 
+playlistList.addEventListener("click", (event) => {
+    if (event.target.tagName === "A") {
+        const selectedId = parseInt(event.target.dataset.index);
+        loadSong(selectedId);
+        updatePlayButtonText();
+        lyricsBox.classList.add("show");
+        container.classList.add("lyrics-visible");
+    }
+});
+
 searchInput.addEventListener("input", (event) => {
-    displayPlaylist(event.target.value.trim());
+    const searchTerm = event.target.value.trim();
+    displayPlaylist(searchTerm);
 });
 
 function toggleTheme() {
     document.body.classList.toggle("dark-theme");
-    const isDark = document.body.classList.contains("dark-theme");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-    themeToggleBtn.textContent = isDark ? "تم روشن" : "تم تیره";
+    if (document.body.classList.contains("dark-theme")) {
+        localStorage.setItem("theme", "dark");
+        themeToggleBtn.textContent = "تم روشن";
+    } else {
+        localStorage.setItem("theme", "light");
+        themeToggleBtn.textContent = "تم تیره";
+    }
 }
 
 window.addEventListener("load", () => {
-    if (localStorage.getItem("theme") === "dark") {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
         document.body.classList.add("dark-theme");
         themeToggleBtn.textContent = "تم روشن";
     } else {
@@ -446,20 +577,39 @@ themeToggleBtn.addEventListener("click", toggleTheme);
 
 togglePlaylistBtn.addEventListener("click", () => {
     isPlaylistCollapsed = !isPlaylistCollapsed;
-    musicPlayer.classList.toggle("collapsed");
-    togglePlaylistBtn.textContent = isPlaylistCollapsed ? "↓" : "↑";
+    if (isPlaylistCollapsed) {
+        musicPlayer.classList.add("collapsed");
+        togglePlaylistBtn.textContent = "↓";
+    } else {
+        musicPlayer.classList.remove("collapsed");
+        togglePlaylistBtn.textContent = "↑";
+    }
 });
 
 document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
         event.preventDefault();
-        playBtn.click();
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+        } else {
+            audioPlayer.pause();
+        }
+        updatePlayButtonText();
     } else if (event.code === "ArrowRight") {
         event.preventDefault();
-        nextBtn.click();
+        if (playlist.length > 0) {
+            currentSongIndex = (currentSongIndex + 1) % playlist.length;
+            loadSong(playlist[currentSongIndex].id);
+            updatePlayButtonText();
+        }
     } else if (event.code === "ArrowLeft") {
         event.preventDefault();
-        prevBtn.click();
+        if (playlist.length > 0) {
+            currentSongIndex =
+                (currentSongIndex - 1 + playlist.length) % playlist.length;
+            loadSong(playlist[currentSongIndex].id);
+            updatePlayButtonText();
+        }
     } else if (event.code === "ArrowUp") {
         event.preventDefault();
         audioPlayer.volume = Math.min(1, audioPlayer.volume + 0.1);
@@ -471,28 +621,14 @@ document.addEventListener("keydown", (event) => {
     }
 });
 
-// پشتیبانی از ژست‌های لمسی
-let touchStartX = 0;
-let touchEndX = 0;
-
-musicPlayer.addEventListener("touchstart", (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-});
-
-musicPlayer.addEventListener("touchend", (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    if (touchStartX - touchEndX > 50) {
-        nextBtn.click(); // سوایپ به چپ
-    } else if (touchEndX - touchStartX > 50) {
-        prevBtn.click(); // سوایپ به راست
-    }
-});
-
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker
-            .register("service-worker.js")
-            .then((registration) => console.log("Service Worker registered:", registration))
-            .catch((error) => console.error("Service Worker registration failed:", error));
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registered:', registration);
+            })
+            .catch(error => {
+                console.error('Service Worker registration failed:', error);
+            });
     });
 }
