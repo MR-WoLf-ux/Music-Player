@@ -5,7 +5,7 @@ const urlsToCache = [
     './JS/script.js',
     './Icon/Music.png',
     './Icon/Default.png',
-    './JSON/manifest.json',
+    './manifest.json',
     'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap',
     'https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js'
 ];
