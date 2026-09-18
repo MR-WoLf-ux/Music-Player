@@ -258,7 +258,7 @@ function loadSong(songId) {
                         const imageUrl = `data:${picture.format};base64,${base64String}`;
                         albumCoverImg.src = imageUrl;
                     } else {
-                        albumCoverImg.src = "/Icon/Default.png";
+                        albumCoverImg.src = "./Icon/Default.png";
                     }
 
                     if (tag.tags.artist) {
@@ -287,7 +287,7 @@ function loadSong(songId) {
                 },
                 onError: (error) => {
                     console.error("Error reading metadata:", error);
-                    albumCoverImg.src = "/Icon/Default.png";
+                    albumCoverImg.src = "./Icon/Default.png";
                     artistDisplay.textContent = song.artist || "Unknown Artist";
                     songTitleDisplay.textContent = displayTitle;
                     showNotification(song.title, song.artist);
@@ -323,7 +323,7 @@ function loadSong(songId) {
         } else {
             lyricsBox.classList.remove("show");
             container.classList.remove("lyrics-visible");
-            albumCoverImg.src = "/Icon/Default.png";
+            albumCoverImg.src = "./Icon/Default.png";
         }
     });
 }
@@ -396,12 +396,12 @@ function loadSavedPlaylist() {
             } else {
                 lyricsBox.classList.remove("show");
                 container.classList.remove("lyrics-visible");
-                albumCoverImg.src = "/Icon/Default.png";
+                albumCoverImg.src = "./Icon/Default.png";
             }
         } else {
             lyricsBox.classList.remove("show");
             container.classList.remove("lyrics-visible");
-            albumCoverImg.src = "/Icon/Default.png";
+            albumCoverImg.src = "./Icon/Default.png";
         }
     });
 }
