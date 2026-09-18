@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>موزیک پلیر</title>
-    <link rel="stylesheet" href="style.css" type="text/css">
+    <link rel="stylesheet" href="/Css/style.css" type="text/css">
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="/JSON/manifest.json">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
 </head>
 
-<body>
+<body data-theme="light">
     <div class="container">
         <div class="music-player">
             <div class="current-song">
@@ -46,8 +46,9 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 18V6l8 6-8 6Z" />
                         </svg>
-                        <svg id="pauseIcon" style="display: none;" class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <svg id="pauseIcon" style="display: none;" class="w-6 h-6 text-gray-800 dark:text-white"
+                            aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                            viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 6H8a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Zm7 0h-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1Z" />
                         </svg>
@@ -80,6 +81,13 @@
             </div>
             <div class="search-container">
                 <button id="select-folder-btn">انتخاب پوشه</button>
+                <button id="favorites-filter-btn" class="favorites-filter-btn" title="فقط موردعلاقه‌ها">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                </button>
                 <input type="text" id="search-input" placeholder="جستجوی آهنگ...">
             </div>
             <button id="toggle-playlist-btn" class="toggle-playlist-btn">↑</button>
@@ -95,16 +103,69 @@
                 <textarea id="lyrics-textarea" rows="12"></textarea>
                 <button id="save-lyrics-btn">ذخیره</button>
             </div>
-            <div class="theme-toggle-container">
-                <button id="theme-toggle-btn">تغییر تم</button>
+            <div class="theme-picker-container">
+                <button id="theme-toggle-btn" class="theme-toggle-btn" title="تغییر تم">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="4" />
+                        <path
+                            d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+                    </svg>
+                    <span>انتخاب تم</span>
+                </button>
+                <div class="theme-picker-panel" id="theme-picker-panel">
+                    <h3>تم را انتخاب کنید</h3>
+                    <div class="theme-grid">
+                        <button class="theme-option" data-theme="light" title="روشن">
+                            <span class="theme-preview"
+                                style="background: linear-gradient(135deg, #ffffff 50%, #007bff 50%);"></span>
+                            <span>روشن</span>
+                        </button>
+                        <button class="theme-option" data-theme="dark" title="تیره">
+                            <span class="theme-preview"
+                                style="background: linear-gradient(135deg, #2c2c2c 50%, #007bff 50%);"></span>
+                            <span>تیره</span>
+                        </button>
+                        <button class="theme-option" data-theme="ocean" title="اقیانوسی">
+                            <span class="theme-preview"
+                                style="background: linear-gradient(135deg, #0a1929 50%, #00b4d8 50%);"></span>
+                            <span>اقیانوسی</span>
+                        </button>
+                        <button class="theme-option" data-theme="galaxy" title="کهکشانی">
+                            <span class="theme-preview"
+                                style="background: linear-gradient(135deg, #1a0b2e 50%, #b537f2 50%);"></span>
+                            <span>کهکشانی</span>
+                        </button>
+                        <button class="theme-option" data-theme="forest" title="جنگلی">
+                            <span class="theme-preview"
+                                style="background: linear-gradient(135deg, #1b2a1b 50%, #4caf50 50%);"></span>
+                            <span>جنگلی</span>
+                        </button>
+                        <button class="theme-option" data-theme="sunset" title="غروب">
+                            <span class="theme-preview"
+                                style="background: linear-gradient(135deg, #2d1b0e 50%, #ff6b35 50%);"></span>
+                            <span>غروب</span>
+                        </button>
+                        <button class="theme-option" data-theme="neon" title="نئون">
+                            <span class="theme-preview"
+                                style="background: linear-gradient(135deg, #1a1a2e 50%, #ff006e 50%);"></span>
+                            <span>نئون</span>
+                        </button>
+                        <button class="theme-option" data-theme="rose" title="رزگلد">
+                            <span class="theme-preview"
+                                style="background: linear-gradient(135deg, #fdf2f8 50%, #ec4899 50%);"></span>
+                            <span>رزگلد</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div class="notification" id="song-notification">
+    <div class="notification hide" id="song-notification">
         <span id="notification-title"></span>
         <span id="notification-artist"></span>
     </div>
-    <script src="script.js"></script>
+    <script src="/JS/script.js"></script>
 </body>
 
 </html>
