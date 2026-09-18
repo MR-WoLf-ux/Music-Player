@@ -1,0 +1,1102 @@
+* {
+    font-family: "Vazirmatn", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    margin: 0;
+    overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+button {
+    outline: none;
+}
+
+#playIcon,
+#pauseIcon {
+    width: 24px;
+    height: 24px;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    width: 80%;
+    margin: 20px auto;
+    transition: background-color 0.3s;
+}
+
+.lyrics-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lyrics-box {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 300px;
+    margin-right: 20px;
+    overflow-y: hidden;
+    max-height: 400px;
+    direction: rtl;
+    text-align: right;
+    display: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.lyrics-box.show {
+    display: block !important;
+}
+
+#lyrics-textarea {
+    width: 100%;
+    height: calc(100% - 60px);
+    border: 1px solid #ccc;
+    resize: none;
+    font-family: inherit;
+    direction: ltr;
+    padding: 5px;
+    box-sizing: border-box;
+    outline: none;
+    margin-bottom: 10px;
+    scrollbar-width: none;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.container.lyrics-visible .music-player {
+    margin-right: 20px;
+}
+
+.music-player {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    width: 400px;
+    direction: rtl;
+    overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.current-song {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 200px;
+}
+
+.album-cover {
+    width: 150px;
+    height: 150px;
+    flex-shrink: 0;
+    margin: 0 auto 10px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 150px;
+}
+
+#album-cover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#song-info {
+    text-align: center;
+    margin-top: 10px;
+    width: 100%;
+    overflow: hidden;
+}
+
+#song-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    transition: color 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+#artist {
+    font-size: 1rem;
+    color: #777;
+    transition: color 0.3s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 200px;
+}
+
+.top-controls {
+    margin-bottom: 10px;
+}
+
+.controls button {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    margin: 0 5px;
+    cursor: pointer;
+    color: #333;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.controls button.active {
+    color: #28a745;
+}
+
+.controls button:hover {
+    transform: scale(1.2);
+    color: #007bff;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    width: 90%;
+    margin-bottom: 10px;
+}
+
+#seek-slider {
+    background: #007bff;
+    border-radius: 4px;
+    height: 8px;
+    width: 100%;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+#seek-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#seek-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#volume-slider {
+    background: #007bff;
+    border-radius: 4px;
+    height: 8px;
+    width: 100%;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.visualizer-container {
+    width: 90%;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+#visualizer {
+    width: 100%;
+    height: 80px;
+    border-radius: 8px;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(0, 0, 0, 0.05)
+    );
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s;
+}
+
+.time-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #777;
+    margin-right: 10px;
+    transition: color 0.3s;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    gap: 10px;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+    max-height: 50px;
+}
+
+#search-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    direction: rtl;
+    outline: none;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+#search-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.toggle-playlist-btn {
+    display: block;
+    margin: 10px auto;
+    padding: 5px 10px;
+    font-size: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.toggle-playlist-btn:hover {
+    background-color: #0056b3;
+}
+
+.playlist {
+    transition: max-height 0.5s ease;
+    max-height: 300px;
+}
+
+.playlist ul {
+    list-style: none;
+    padding: 0;
+    max-height: 22rem;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-x: hidden;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.playlist li a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-light);
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.4;
+}
+.playlist li:last-child a {
+    border-bottom: none;
+}
+
+#select-folder-btn {
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#select-folder-btn:hover {
+    background-color: #0056b3;
+}
+
+#save-lyrics-btn {
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#save-lyrics-btn:hover {
+    background-color: #0056b3;
+}
+
+/* ============================================
+   نوتیفیکیشن (رفع باگ‌ها)
+   ============================================ */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--notification-bg);
+    color: var(--notification-text);
+    padding: 10px 20px;
+    border-radius: 8px;
+    flex-direction: column;
+    box-shadow: 0 4px 8px var(--shadow-strong);
+    z-index: 1000;
+    display: none;
+}
+
+#notification-title {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+#notification-artist {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.notification.show {
+    display: flex;
+    animation: slideIn 0.5s ease-in-out forwards;
+}
+
+.notification.hide {
+    display: flex;
+    animation: slideOut 0.5s ease-in-out forwards;
+}
+
+.music-player.collapsed .current-song,
+.music-player.collapsed .controls,
+.music-player.collapsed .search-container {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.music-player.collapsed .playlist {
+    max-height: 500px;
+}
+
+/* ============================================
+   سیستم تم پیشرفته با CSS Variables
+   ============================================ */
+
+/* ---------- تم پیش‌فرض (روشن) ---------- */
+:root {
+    --bg-body: #f0f0f0;
+    --bg-container: #f0f0f0;
+    --bg-player: #ffffff;
+    --bg-lyrics: #ffffff;
+    --bg-input: #ffffff;
+    --bg-textarea: #ffffff;
+    --bg-playlist: #ffffff;
+    --bg-playlist-item-hover: #f5f5f5;
+
+    --text-primary: #333333;
+    --text-secondary: #777777;
+    --text-muted: #999999;
+    --text-on-accent: #ffffff;
+
+    --accent: #007bff;
+    --accent-hover: #0056b3;
+    --accent-active: #28a745;
+    --accent-gradient-from: #007bff;
+    --accent-gradient-to: #00c6ff;
+
+    --border: #dddddd;
+    --border-light: #eeeeee;
+    --shadow: rgba(0, 0, 0, 0.2);
+    --shadow-strong: rgba(0, 0, 0, 0.3);
+
+    --notification-bg: rgba(0, 0, 0, 0.85);
+    --notification-text: #ffffff;
+}
+
+/* ---------- تم تیره ---------- */
+[data-theme="dark"] {
+    --bg-body: #1a1a1a;
+    --bg-container: #1a1a1a;
+    --bg-player: #2c2c2c;
+    --bg-lyrics: #2c2c2c;
+    --bg-input: #333333;
+    --bg-textarea: #333333;
+    --bg-playlist: #333333;
+    --bg-playlist-item-hover: #444444;
+
+    --text-primary: #ffffff;
+    --text-secondary: #bbbbbb;
+    --text-muted: #888888;
+
+    --accent: #007bff;
+    --accent-hover: #0056b3;
+    --accent-active: #28a745;
+    --accent-gradient-from: #007bff;
+    --accent-gradient-to: #00c6ff;
+
+    --border: #555555;
+    --border-light: #444444;
+    --shadow: rgba(0, 0, 0, 0.5);
+    --shadow-strong: rgba(0, 0, 0, 0.6);
+
+    --notification-bg: rgba(255, 255, 255, 0.1);
+    --notification-text: #ffffff;
+}
+
+/* ---------- تم اقیانوسی ---------- */
+[data-theme="ocean"] {
+    --bg-body: #06141f;
+    --bg-container: #06141f;
+    --bg-player: #0a1929;
+    --bg-lyrics: #0a1929;
+    --bg-input: #102a43;
+    --bg-textarea: #102a43;
+    --bg-playlist: #102a43;
+    --bg-playlist-item-hover: #1a3a5c;
+
+    --text-primary: #e0fbfc;
+    --text-secondary: #90e0ef;
+    --text-muted: #6c9db5;
+
+    --accent: #00b4d8;
+    --accent-hover: #0077b6;
+    --accent-active: #00f5d4;
+    --accent-gradient-from: #00b4d8;
+    --accent-gradient-to: #03045e;
+
+    --border: #1e4976;
+    --border-light: #143355;
+    --shadow: rgba(0, 180, 216, 0.2);
+    --shadow-strong: rgba(0, 0, 0, 0.6);
+
+    --notification-bg: rgba(0, 180, 216, 0.15);
+    --notification-text: #e0fbfc;
+}
+
+/* ---------- تم کهکشانی ---------- */
+[data-theme="galaxy"] {
+    --bg-body: #0a0118;
+    --bg-container: #0a0118;
+    --bg-player: #1a0b2e;
+    --bg-lyrics: #1a0b2e;
+    --bg-input: #2d1b4e;
+    --bg-textarea: #2d1b4e;
+    --bg-playlist: #2d1b4e;
+    --bg-playlist-item-hover: #3d2b6e;
+
+    --text-primary: #f0e6ff;
+    --text-secondary: #c4a0e8;
+    --text-muted: #8a6bb8;
+
+    --accent: #b537f2;
+    --accent-hover: #8a1fd1;
+    --accent-active: #f72585;
+    --accent-gradient-from: #b537f2;
+    --accent-gradient-to: #7209b7;
+
+    --border: #4a2d7a;
+    --border-light: #3a1d5e;
+    --shadow: rgba(181, 55, 242, 0.3);
+    --shadow-strong: rgba(0, 0, 0, 0.7);
+
+    --notification-bg: rgba(181, 55, 242, 0.2);
+    --notification-text: #f0e6ff;
+}
+
+/* ---------- تم جنگلی ---------- */
+[data-theme="forest"] {
+    --bg-body: #0f1a0f;
+    --bg-container: #0f1a0f;
+    --bg-player: #1b2a1b;
+    --bg-lyrics: #1b2a1b;
+    --bg-input: #2a3d2a;
+    --bg-textarea: #2a3d2a;
+    --bg-playlist: #2a3d2a;
+    --bg-playlist-item-hover: #3a4d3a;
+
+    --text-primary: #e8f5e9;
+    --text-secondary: #a5d6a7;
+    --text-muted: #7cb342;
+
+    --accent: #4caf50;
+    --accent-hover: #388e3c;
+    --accent-active: #8bc34a;
+    --accent-gradient-from: #4caf50;
+    --accent-gradient-to: #1b5e20;
+
+    --border: #3e5e3e;
+    --border-light: #2e4e2e;
+    --shadow: rgba(76, 175, 80, 0.3);
+    --shadow-strong: rgba(0, 0, 0, 0.6);
+
+    --notification-bg: rgba(76, 175, 80, 0.2);
+    --notification-text: #e8f5e9;
+}
+
+/* ---------- تم غروب ---------- */
+[data-theme="sunset"] {
+    --bg-body: #1a0f08;
+    --bg-container: #1a0f08;
+    --bg-player: #2d1b0e;
+    --bg-lyrics: #2d1b0e;
+    --bg-input: #422a18;
+    --bg-textarea: #422a18;
+    --bg-playlist: #422a18;
+    --bg-playlist-item-hover: #5a3a22;
+
+    --text-primary: #ffedd5;
+    --text-secondary: #fdba74;
+    --text-muted: #c2803f;
+
+    --accent: #ff6b35;
+    --accent-hover: #e04e1a;
+    --accent-active: #ffb703;
+    --accent-gradient-from: #ff6b35;
+    --accent-gradient-to: #d62828;
+
+    --border: #6b4423;
+    --border-light: #4a2f15;
+    --shadow: rgba(255, 107, 53, 0.3);
+    --shadow-strong: rgba(0, 0, 0, 0.6);
+
+    --notification-bg: rgba(255, 107, 53, 0.2);
+    --notification-text: #ffedd5;
+}
+
+/* ---------- تم نئون ---------- */
+[data-theme="neon"] {
+    --bg-body: #0a0a1a;
+    --bg-container: #0a0a1a;
+    --bg-player: #1a1a2e;
+    --bg-lyrics: #1a1a2e;
+    --bg-input: #26264a;
+    --bg-textarea: #26264a;
+    --bg-playlist: #26264a;
+    --bg-playlist-item-hover: #35356a;
+
+    --text-primary: #f0f0ff;
+    --text-secondary: #a0a0ff;
+    --text-muted: #6a6ab0;
+
+    --accent: #ff006e;
+    --accent-hover: #d10058;
+    --accent-active: #00f5ff;
+    --accent-gradient-from: #ff006e;
+    --accent-gradient-to: #8338ec;
+
+    --border: #3d3d7a;
+    --border-light: #2d2d5a;
+    --shadow: rgba(255, 0, 110, 0.4);
+    --shadow-strong: rgba(0, 0, 0, 0.7);
+
+    --notification-bg: rgba(255, 0, 110, 0.2);
+    --notification-text: #f0f0ff;
+}
+
+/* ---------- تم رزگلد ---------- */
+[data-theme="rose"] {
+    --bg-body: #fdf2f8;
+    --bg-container: #fdf2f8;
+    --bg-player: #ffffff;
+    --bg-lyrics: #ffffff;
+    --bg-input: #fce7f3;
+    --bg-textarea: #fce7f3;
+    --bg-playlist: #fce7f3;
+    --bg-playlist-item-hover: #fbcfe8;
+
+    --text-primary: #500724;
+    --text-secondary: #9d174d;
+    --text-muted: #be185d;
+
+    --accent: #ec4899;
+    --accent-hover: #db2777;
+    --accent-active: #f472b6;
+    --accent-gradient-from: #ec4899;
+    --accent-gradient-to: #a855f7;
+
+    --border: #f9a8d4;
+    --border-light: #fbcfe8;
+    --shadow: rgba(236, 72, 153, 0.25);
+    --shadow-strong: rgba(236, 72, 153, 0.4);
+
+    --notification-bg: rgba(80, 7, 36, 0.85);
+    --notification-text: #ffffff;
+}
+
+/* ============================================
+   اعمال متغیرها به المان‌ها
+   ============================================ */
+
+body {
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+}
+
+.container {
+    background-color: var(--bg-container);
+}
+
+.music-player {
+    background-color: var(--bg-player);
+    color: var(--text-primary);
+    box-shadow: 0 10px 20px var(--shadow);
+}
+
+.lyrics-box {
+    background-color: var(--bg-lyrics);
+    color: var(--text-primary);
+    box-shadow: 0 10px 20px var(--shadow);
+}
+
+#lyrics-textarea {
+    background-color: var(--bg-textarea);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+#song-title {
+    color: var(--text-primary);
+}
+
+#artist {
+    color: var(--text-secondary);
+}
+
+.current-song {
+    border-bottom: 1px solid var(--border-light);
+}
+
+.controls button {
+    color: var(--text-primary);
+}
+
+.controls button:hover {
+    color: var(--accent);
+}
+
+.controls button.active {
+    color: var(--accent-active);
+}
+
+.time-display {
+    color: var(--text-secondary);
+}
+
+#seek-slider,
+#volume-slider {
+    background: var(--accent);
+}
+
+#seek-slider::-webkit-slider-thumb,
+#volume-slider::-webkit-slider-thumb {
+    background: var(--accent);
+    box-shadow: 0 0 5px var(--accent);
+}
+
+#seek-slider::-moz-range-thumb,
+#volume-slider::-moz-range-thumb {
+    background: var(--accent);
+    box-shadow: 0 0 5px var(--accent);
+}
+
+.playlist ul {
+    border: 1px solid var(--border);
+    background-color: var(--bg-playlist);
+}
+
+.playlist li a {
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.playlist li a:hover {
+    background-color: var(--bg-playlist-item-hover);
+    color: var(--accent);
+}
+
+/* ============================================
+   استایل آهنگ در حال پخش در لیست
+   ============================================ */
+.playlist li a.active-song {
+    color: var(--accent) !important;
+    font-weight: bold;
+    background-color: var(--bg-playlist-item-hover);
+    position: relative;
+    padding-right: 30px;
+}
+
+.playlist li a.active-song::before {
+    content: "▶";
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75em;
+    color: var(--accent);
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
+#select-folder-btn,
+#save-lyrics-btn,
+.toggle-playlist-btn,
+.theme-toggle-btn {
+    background-color: var(--accent);
+    color: var(--text-on-accent);
+}
+
+#select-folder-btn:hover,
+#save-lyrics-btn:hover,
+.toggle-playlist-btn:hover,
+.theme-toggle-btn:hover {
+    background-color: var(--accent-hover);
+}
+
+#search-input {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+#search-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 5px var(--accent);
+}
+
+#search-input::placeholder {
+    color: var(--text-muted);
+}
+
+#visualizer {
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(0, 0, 0, 0.05)
+    );
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+/* ============================================
+   استایل پنل انتخاب تم
+   ============================================ */
+
+.theme-picker-container {
+    position: relative;
+    width: 300px;
+    margin-right: 20px;
+    margin-top: 10px;
+}
+
+.theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.theme-toggle-btn:hover {
+    transform: translateY(-2px);
+}
+
+.theme-toggle-btn:active {
+    transform: translateY(0);
+}
+
+.theme-picker-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    background-color: var(--bg-player);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 10px 30px var(--shadow-strong);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+}
+
+.theme-picker-panel.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.theme-picker-panel h3 {
+    margin: 0 0 12px 0;
+    font-size: 0.95rem;
+    text-align: center;
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+.theme-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.theme-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 4px;
+    background-color: transparent;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.7rem;
+    color: var(--text-primary);
+    transition: border-color 0.2s, transform 0.2s, background-color 0.2s;
+    overflow: visible;
+}
+
+.theme-option span:last-child {
+    color: var(--text-primary);
+    font-weight: 500;
+    display: block;
+    text-align: center;
+    width: 100%;
+    line-height: 1.2;
+}
+
+.theme-option:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.theme-option:hover span:last-child {
+    color: var(--accent);
+}
+
+.theme-option.active {
+    border-color: var(--accent);
+    background-color: var(--bg-playlist-item-hover);
+    box-shadow: 0 0 0 2px var(--accent);
+}
+
+.theme-option.active span:last-child {
+    color: var(--accent);
+    font-weight: bold;
+}
+
+.theme-preview {
+    display: block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--border-light);
+    box-shadow: 0 2px 6px var(--shadow);
+    flex-shrink: 0;
+}
+
+/* تم دارک legacy (برای سازگاری) */
+body.dark-theme {
+    background-color: var(--bg-body);
+}
+
+/* ============================================
+   موردعلاقه‌ها
+   ============================================ */
+
+/* دکمه‌ی قلب روی هر آهنگ در لیست */
+.playlist li {
+    position: relative;
+}
+
+.playlist li a {
+    padding-left: 40px; /* فضا برای قلب */
+}
+
+.favorite-btn {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    transition: color 0.2s, transform 0.2s, background-color 0.2s;
+    z-index: 2;
+}
+
+.favorite-btn:hover {
+    color: #e91e63;
+    transform: translateY(-50%) scale(1.2);
+    background-color: var(--bg-playlist-item-hover);
+}
+
+.favorite-btn.is-favorite {
+    color: #e91e63;
+}
+
+.favorite-btn.is-favorite svg {
+    fill: #e91e63;
+}
+
+.favorite-btn svg {
+    width: 18px;
+    height: 18px;
+    transition: fill 0.2s, transform 0.2s;
+}
+
+/* انیمیشن ضربان فقط در لحظه‌ی کلیک کاربر */
+.favorite-btn.heart-beat svg {
+    animation: heartBeat 0.4s ease;
+}
+
+@keyframes heartBeat {
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scale(1.3);
+    }
+
+    60% {
+        transform: scale(0.95);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* دکمه‌ی فیلتر موردعلاقه‌ها */
+.favorites-filter-btn {
+    background-color: transparent;
+    border: 2px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.favorites-filter-btn:hover {
+    border-color: #e91e63;
+    color: #e91e63;
+}
+
+.favorites-filter-btn.active {
+    background-color: #e91e63;
+    border-color: #e91e63;
+    color: #fff;
+}
+
+.favorites-filter-btn.active svg {
+    fill: #fff;
+}
