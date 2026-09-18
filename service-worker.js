@@ -1,11 +1,11 @@
 const CACHE_NAME = 'music-player-cache-v1';
 const urlsToCache = [
-    '/index.html',
-    '/Css/style.css',
-    '/JS/script.js',
-    '/Icon/Music.png',
-    '/Icon/Default.png',
-    '/JSON/manifest.json',
+    './index.html',
+    './Css/style.css',
+    './JS/script.js',
+    './Icon/Music.png',
+    './Icon/Default.png',
+    './JSON/manifest.json',
     'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap',
     'https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js'
 ];
